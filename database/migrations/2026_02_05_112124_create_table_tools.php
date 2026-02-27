@@ -57,14 +57,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('tool_statuses', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('description');
-            $table->string('tool_id');
-            $table->timestamps();
-        });
-
         Schema::create('tool_notes', function (Blueprint $table) {
             $table->id();
             $table->string('note');
@@ -110,28 +102,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('tool_notes', function (Blueprint $table) {
-            $table->id();
-            $table->string('note');
-            $table->string('tool_id');
-            $table->timestamps();
-        });
-
-        Schema::create('tool_users', function (Blueprint $table) {
-            $table->id();
-            $table->string('user_id');
-            $table->string('tool_id');
-            $table->timestamps();
-        });
-        
-        Schema::create('tool_system_activities', function (Blueprint $table) {
-            $table->id();
-            $table->string('activity');
-            $table->string('description');
-            $table->string('tool_id');
-            $table->timestamps();
-        });
-        
     }
 
     /**

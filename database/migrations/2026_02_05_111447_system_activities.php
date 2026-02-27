@@ -11,22 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('system_activities', function (Blueprint $table) {
-            $table->id();
-            $table->string('activity');
-            $table->string('description');
-            $table->string('user_id');
-            $table->string('user_name');
-            $table->string('user_email');
-            $table->string('user_phone');
-        });
 
         Schema::create('system_notifications', function (Blueprint $table) {
             $table->id();
             $table->string('notification');
             $table->string('description');
             $table->string('user_id');
-            table->string('remarks');
+            $table->string('remarks');
         });
     }
 
@@ -35,6 +26,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        //  
+        Schema::dropIfExists('system_activities');
+        Schema::dropIfExists('system_notifications');
     }
 };

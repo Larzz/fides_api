@@ -57,7 +57,7 @@ return new class extends Migration
             $table->string('notification');
             $table->string('description');
             $table->string('user_id');
-            table->string('remarks');
+            $table->string('remarks');
             $table->timestamps();
         });
 
@@ -77,13 +77,6 @@ return new class extends Migration
         });
 
         Schema::create('user_roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('description');
-            $table->timestamps();
-        });
-
-        Schema::create('user_statuses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('description');
@@ -180,5 +173,16 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('user_system_activities');
+        Schema::dropIfExists('user_system_notifications');
+        Schema::dropIfExists('user_system_notifications_read');
+        Schema::dropIfExists('user_roles');
+        Schema::dropIfExists('user_statuses');
+        Schema::dropIfExists('user_notes');
+        Schema::dropIfExists('user_images');
+        Schema::dropIfExists('user_content_upload');
+        Schema::dropIfExists('user_content_share');
+        Schema::dropIfExists('user_content_category');
+        Schema::dropIfExists('user_content_download');
     }
 };

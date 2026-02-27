@@ -15,6 +15,13 @@ return new class extends Migration
         Schema::create('leave', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('user_id');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->string('status');
+            $table->string('type');
+            $table->string('reason');
+            $table->string('notes');
             $table->string('description');
             $table->timestamps();
         });
@@ -32,7 +39,7 @@ return new class extends Migration
             $table->string('notification');
             $table->string('description');
             $table->string('user_id');
-            table->string('remarks');
+            $table->string('remarks');
         });
 
         Schema::create('leave_system_notifications_read', function (Blueprint $table) {
@@ -71,5 +78,11 @@ return new class extends Migration
     public function down(): void
     {
         //
+        Schema::dropIfExists('leave');
+        Schema::dropIfExists('leave_system_activities');
+        Schema::dropIfExists('leave_system_notifications');
+        Schema::dropIfExists('leave_system_notifications_read');
+        Schema::dropIfExists('leave_statuses');
+        Schema::dropIfExists('leave_notes');
     }
 };
