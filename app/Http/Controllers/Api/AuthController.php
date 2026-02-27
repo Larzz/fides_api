@@ -22,11 +22,11 @@ class AuthController extends Controller
 			'name' => ['required', 'string', 'max:255'],
 			'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
 			'password' => ['required', 'string', 'min:8', 'confirmed'],
-			'role' => ['nullable', 'string', 'in:Admin,Manager,Staff'],
+			'role' => ['nullable', 'string', 'in:Admin,Staff,Client'],
 		]);
 
 		$validated['password'] = Hash::make($validated['password']);
-		$validated['role'] = $validated['role'] ?? 'Staff';
+		$validated['role'] = $validated['role'] ?? 'Client';
 		$validated['status'] = 'active';
 
 		$user = \App\Models\User::create($validated);

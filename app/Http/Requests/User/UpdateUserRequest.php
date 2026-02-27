@@ -12,7 +12,7 @@ class UpdateUserRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return $this->user()->isAdmin() || $this->user()->isManager() || $this->user()->id === (int) $this->route('user');
+		return $this->user()->isAdmin() || $this->user()->isStaff() || $this->user()->id === (int) $this->route('user');
 	}
 
 	/**
@@ -26,7 +26,7 @@ class UpdateUserRequest extends FormRequest
 			'name' => ['sometimes', 'required', 'string', 'max:255'],
 			'email' => ['sometimes', 'required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($userId)],
 			'password' => ['sometimes', 'nullable', 'string', 'min:8', 'confirmed'],
-			'role' => ['sometimes', 'required', 'string', 'in:Admin,Manager,Staff'],
+			'role' => ['sometimes', 'required', 'string', 'in:Admin,Staff,Client'],
 			'status' => ['sometimes', 'nullable', 'string'],
 			'phone' => ['sometimes', 'nullable', 'string', 'max:20'],
 			'address' => ['sometimes', 'nullable', 'string', 'max:255'],

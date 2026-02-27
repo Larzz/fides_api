@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
 	// User routes
 	Route::prefix('users')->group(function () {
 		Route::get('/', [UserController::class, 'index']);
-		Route::post('/', [UserController::class, 'store'])->middleware('role:Admin,Manager');
+		Route::post('/', [UserController::class, 'store'])->middleware('role:Admin,Staff');
 		Route::get('/search', [UserController::class, 'search']);
 		Route::get('/role/{role}', [UserController::class, 'getByRole']);
 		Route::get('/status/{status}', [UserController::class, 'getByStatus']);
@@ -28,9 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
 		Route::put('/{id}', [UserController::class, 'update']);
 		Route::delete('/{id}', [UserController::class, 'destroy'])->middleware('role:Admin');
 		Route::post('/{id}/assign-role', [UserController::class, 'assignRole'])->middleware('role:Admin');
-		Route::post('/{id}/assign-status', [UserController::class, 'assignStatus'])->middleware('role:Admin,Manager');
+		Route::post('/{id}/assign-status', [UserController::class, 'assignStatus'])->middleware('role:Admin,Staff');
 		Route::post('/{id}/upload-image', [UserController::class, 'uploadImage']);
-		Route::post('/{id}/add-note', [UserController::class, 'addNote'])->middleware('role:Admin,Manager');
+		Route::post('/{id}/add-note', [UserController::class, 'addNote'])->middleware('role:Admin,Staff');
 	});
 
 	// Leave routes
@@ -41,26 +41,26 @@ Route::middleware('auth:sanctum')->group(function () {
 		Route::get('/{id}', [LeaveController::class, 'show']);
 		Route::put('/{id}', [LeaveController::class, 'update']);
 		Route::delete('/{id}', [LeaveController::class, 'destroy']);
-		Route::post('/{id}/approve', [LeaveController::class, 'approve'])->middleware('role:Admin,Manager');
-		Route::post('/{id}/reject', [LeaveController::class, 'reject'])->middleware('role:Admin,Manager');
+		Route::post('/{id}/approve', [LeaveController::class, 'approve'])->middleware('role:Admin,Staff');
+		Route::post('/{id}/reject', [LeaveController::class, 'reject'])->middleware('role:Admin,Staff');
 		Route::post('/{id}/add-note', [LeaveController::class, 'addNote']);
 	});
 
 	// Tool routes
 	Route::prefix('tools')->group(function () {
 		Route::get('/', [ToolController::class, 'index']);
-		Route::post('/', [ToolController::class, 'store'])->middleware('role:Admin,Manager');
+		Route::post('/', [ToolController::class, 'store'])->middleware('role:Admin,Staff');
 		Route::get('/search', [ToolController::class, 'search']);
 		Route::get('/category/{category}', [ToolController::class, 'getByCategory']);
 		Route::get('/status/{status}', [ToolController::class, 'getByStatus']);
 		Route::get('/user/{userId}', [ToolController::class, 'getByUser']);
 		Route::get('/{id}', [ToolController::class, 'show']);
-		Route::put('/{id}', [ToolController::class, 'update'])->middleware('role:Admin,Manager');
+		Route::put('/{id}', [ToolController::class, 'update'])->middleware('role:Admin,Staff');
 		Route::delete('/{id}', [ToolController::class, 'destroy'])->middleware('role:Admin');
-		Route::post('/{id}/assign-users', [ToolController::class, 'assignUsers'])->middleware('role:Admin,Manager');
-		Route::post('/{id}/add-note', [ToolController::class, 'addNote'])->middleware('role:Admin,Manager');
-		Route::post('/{id}/add-cost', [ToolController::class, 'addCost'])->middleware('role:Admin,Manager');
-		Route::post('/{id}/add-billing', [ToolController::class, 'addBilling'])->middleware('role:Admin,Manager');
+		Route::post('/{id}/assign-users', [ToolController::class, 'assignUsers'])->middleware('role:Admin,Staff');
+		Route::post('/{id}/add-note', [ToolController::class, 'addNote'])->middleware('role:Admin,Staff');
+		Route::post('/{id}/add-cost', [ToolController::class, 'addCost'])->middleware('role:Admin,Staff');
+		Route::post('/{id}/add-billing', [ToolController::class, 'addBilling'])->middleware('role:Admin,Staff');
 	});
 
 	// Content routes

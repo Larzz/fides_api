@@ -46,7 +46,7 @@ Authorization: Bearer {token}
   "email": "john@example.com",
   "password": "password123",
   "password_confirmation": "password123",
-  "role": "Staff"
+  "role": "Client"
 }
 ```
 
@@ -136,7 +136,7 @@ Authorization: Bearer {token}
   "email": "jane@example.com",
   "password": "password123",
   "password_confirmation": "password123",
-  "role": "Manager",
+  "role": "Staff",
   "status": "active",
   "phone": "+1234567890",
   "address": "123 Main St",
@@ -188,7 +188,7 @@ Authorization: Bearer {token}
 }
 ```
 
-**Required Role:** Admin, Manager
+**Required Role:** Admin, Staff
 
 ### Upload Profile Image
 **POST** `/api/users/{id}/upload-image`
@@ -254,7 +254,7 @@ Authorization: Bearer {token}
 ```json
 {
   "status": "approved",
-  "notes": "Approved by manager"
+  "notes": "Approved by staff"
 }
 ```
 
@@ -271,7 +271,7 @@ Authorization: Bearer {token}
 }
 ```
 
-**Required Role:** Admin, Manager
+**Required Role:** Admin, Staff
 
 ### Reject Leave
 **POST** `/api/leaves/{id}/reject`
@@ -283,7 +283,7 @@ Authorization: Bearer {token}
 }
 ```
 
-**Required Role:** Admin, Manager
+**Required Role:** Admin, Staff
 
 ### Add Note
 **POST** `/api/leaves/{id}/add-note`
@@ -352,7 +352,7 @@ Authorization: Bearer {token}
 }
 ```
 
-**Required Role:** Admin, Manager
+**Required Role:** Admin, Staff
 
 ### Add Note
 **POST** `/api/tools/{id}/add-note`
@@ -468,17 +468,19 @@ Authorization: Bearer {token}
 - Can approve/reject leaves
 - Can manage all tools and content
 
-### Manager
+### Staff
 - Can view and manage most resources
 - Can approve/reject leaves
 - Can assign users to tools
+- Can create and manage users (except delete)
 - Cannot delete users or tools
 
-### Staff
+### Client
 - Can create and manage own leaves
 - Can upload and manage own content
 - Can view assigned tools
 - Limited access to user management
+- Can only view and update own profile
 
 ## Pagination
 

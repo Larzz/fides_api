@@ -71,7 +71,7 @@ Event-driven architecture:
 Request filtering:
 - `EnsureRole`: Role-based access control
 - `EnsureAdmin`: Admin-only access
-- `EnsureManager`: Manager+ access
+- `EnsureStaff`: Staff+ access
 
 ### 11. Response Layer (`app/Http/Responses/`)
 Standardized API responses:
@@ -81,7 +81,7 @@ Standardized API responses:
 
 ### Authentication
 - Laravel Sanctum for API token authentication
-- Role-based access control (Admin, Manager, Staff)
+- Role-based access control (Admin, Staff, Client)
 - Protected routes with middleware
 
 ### Activity Logging

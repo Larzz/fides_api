@@ -11,7 +11,7 @@ class StoreUserRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return $this->user()->isAdmin() || $this->user()->isManager();
+		return $this->user()->isAdmin() || $this->user()->isStaff();
 	}
 
 	/**
@@ -23,7 +23,7 @@ class StoreUserRequest extends FormRequest
 			'name' => ['required', 'string', 'max:255'],
 			'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
 			'password' => ['required', 'string', 'min:8', 'confirmed'],
-			'role' => ['required', 'string', 'in:Admin,Manager,Staff'],
+			'role' => ['required', 'string', 'in:Admin,Staff,Client'],
 			'status' => ['nullable', 'string'],
 			'phone' => ['nullable', 'string', 'max:20'],
 			'address' => ['nullable', 'string', 'max:255'],

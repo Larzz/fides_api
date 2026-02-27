@@ -36,7 +36,7 @@ class ContentPolicy
 	 */
 	public function delete(User $user, UserContentUpload $content): bool
 	{
-		return $user->isAdmin() || $user->isManager() || $user->id === $content->user_id;
+		return $user->isAdmin() || $user->isStaff() || $user->id === $content->user_id;
 	}
 
 	/**
@@ -52,7 +52,7 @@ class ContentPolicy
 	 */
 	public function share(User $user, UserContentUpload $content): bool
 	{
-		return $user->id === $content->user_id || $user->isAdmin() || $user->isManager();
+		return $user->id === $content->user_id || $user->isAdmin() || $user->isStaff();
 	}
 }
 

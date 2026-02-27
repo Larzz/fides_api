@@ -28,7 +28,7 @@ class ToolPolicy
 	 */
 	public function create(User $user): bool
 	{
-		return $user->isAdmin() || $user->isManager();
+		return $user->isAdmin() || $user->isStaff();
 	}
 
 	/**
@@ -36,7 +36,7 @@ class ToolPolicy
 	 */
 	public function update(User $user, Tool $tool): bool
 	{
-		return $user->isAdmin() || $user->isManager();
+		return $user->isAdmin() || $user->isStaff();
 	}
 
 	/**
@@ -52,7 +52,7 @@ class ToolPolicy
 	 */
 	public function assignUsers(User $user): bool
 	{
-		return $user->isAdmin() || $user->isManager();
+		return $user->isAdmin() || $user->isStaff();
 	}
 }
 

@@ -165,7 +165,7 @@ if (pm.response.code === 200) {
   "email": "jane@example.com",
   "password": "password123",
   "password_confirmation": "password123",
-  "role": "Manager",
+  "role": "Staff",
   "status": "active"
 }
 ```

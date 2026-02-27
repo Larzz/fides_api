@@ -11,7 +11,7 @@ class UserPolicy
 	 */
 	public function viewAny(User $user): bool
 	{
-		return $user->isAdmin() || $user->isManager();
+		return $user->isAdmin() || $user->isStaff();
 	}
 
 	/**
@@ -19,7 +19,7 @@ class UserPolicy
 	 */
 	public function view(User $user, User $model): bool
 	{
-		return $user->isAdmin() || $user->isManager() || $user->id === $model->id;
+		return $user->isAdmin() || $user->isStaff() || $user->id === $model->id;
 	}
 
 	/**
@@ -27,7 +27,7 @@ class UserPolicy
 	 */
 	public function create(User $user): bool
 	{
-		return $user->isAdmin() || $user->isManager();
+		return $user->isAdmin() || $user->isStaff();
 	}
 
 	/**
@@ -35,7 +35,7 @@ class UserPolicy
 	 */
 	public function update(User $user, User $model): bool
 	{
-		return $user->isAdmin() || $user->isManager() || $user->id === $model->id;
+		return $user->isAdmin() || $user->isStaff() || $user->id === $model->id;
 	}
 
 	/**
@@ -59,7 +59,7 @@ class UserPolicy
 	 */
 	public function assignStatus(User $user): bool
 	{
-		return $user->isAdmin() || $user->isManager();
+		return $user->isAdmin() || $user->isStaff();
 	}
 }
 
