@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
 		Route::post('/', [UserController::class, 'store'])->middleware('role:Admin,Staff');
 		Route::get('/search', [UserController::class, 'search']);
 		Route::get('/role/{role}', [UserController::class, 'getByRole']);
-		Route::get('/status/{status}', [UserController::class, 'getByStatus']);
+		Route::get('/status/{status}', [UserController::class, 'getByStatus']);					
 		Route::get('/{id}', [UserController::class, 'show']);
 		Route::put('/{id}', [UserController::class, 'update']);
 		Route::delete('/{id}', [UserController::class, 'destroy'])->middleware('role:Admin');

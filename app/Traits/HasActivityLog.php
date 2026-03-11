@@ -46,7 +46,7 @@ trait HasActivityLog
 	/**
 	 * Get the foreign key name for the activity table
 	 */
-	protected function getForeignKey(): string
+	public function getForeignKey(): string
 	{
 		$tableName = $this->getTable();
 		// Handle special cases
