@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LeaveController;
 use App\Http\Controllers\Api\ToolController;
 use App\Http\Controllers\Api\ContentController;
+use App\Http\Controllers\Api\DashboardController;
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -76,5 +77,13 @@ Route::middleware('auth:sanctum')->group(function () {
 		Route::post('/{id}/share', [ContentController::class, 'share']);
 		Route::delete('/{id}', [ContentController::class, 'destroy']);
 	});
+
+	Route::prefix('dashboard')->group(function () {
+		Route::get('get-statistics', [DashboardController::class, 'getStatistics']);
+		Route::get('get-all-notifications', [DashboardController::class, 'getAllNotifications']);
+		Route::get('get-all-request-approvals', [DashboardController::class, 'getAllRequestApproval']);
+		Route::get('get-all');
+	});
+
 });
 

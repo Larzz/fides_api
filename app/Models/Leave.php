@@ -14,6 +14,8 @@ class Leave extends Model
 {
 	use HasFactory, SoftDeletes, HasActivityLog, HasNotifications;
 
+	protected $table = 'leave';
+	
 	protected $fillable = [
 		'name',
 		'user_id',
