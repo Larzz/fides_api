@@ -22,7 +22,10 @@ class EnsureRole
 			], 401);
 		}
 
-		if (!in_array($request->user()->role, $roles)) {
+		$userRole = strtolower((string) $request->user()->role);
+		$requiredRoles = array_map('strtolower', $roles);
+
+		if (!in_array($userRole, $requiredRoles, true)) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Insufficient permissions',

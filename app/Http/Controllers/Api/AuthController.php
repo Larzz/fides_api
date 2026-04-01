@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\Activity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,12 +23,16 @@ class AuthController extends Controller
 			'name' => ['required', 'string', 'max:255'],
 			'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
 			'password' => ['required', 'string', 'min:8', 'confirmed'],
-			'role' => ['nullable', 'string', 'in:Admin,Staff,Client'],
+			'role' => ['nullable', 'string', 'in:admin,employee,client'],
 		]);
 
 		$validated['password'] = Hash::make($validated['password']);
-		$validated['role'] = $validated['role'] ?? 'Client';
+		$validated['role'] = $validated['role'] ?? 'client';
 		$validated['status'] = 'active';
+		$validated['notes'] = $validated['notes'] ?? '';
+		$validated['image'] = $validated['image'] ?? '';
+		$validated['resume'] = $validated['resume'] ?? '';
+		$validated['cover_letter'] = $validated['cover_letter'] ?? '';
 
 		$user = \App\Models\User::create($validated);
 		$token = $user->createToken('auth_token')->plainTextToken;
@@ -56,6 +61,16 @@ class AuthController extends Controller
 		}
 
 		$user = Auth::user();
+		$user->forceFill(['last_active_at' => now()])->save();
+
+		Activity::create([
+			'user_id' => $user->id,
+			'action' => 'logged_in',
+			'description' => 'User logged in successfully',
+			'ip_address' => $request->ip(),
+			'created_at' => now(),
+		]);
+
 		$token = $user->createToken('auth_token')->plainTextToken;
 
 		return ApiResponse::success([

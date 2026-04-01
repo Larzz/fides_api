@@ -1,0 +1,2248 @@
+{
+	"info": {
+		"_postman_id": "8f67f30e-7f26-4bf5-9c98-7bc5c89d13df",
+		"name": "Internal Dashboard API",
+		"description": "Postman collection for Laravel internal dashboard APIs (Sanctum). Covers routes registered in routes/api.php.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Admin User\",\n\t\"email\": \"admin@example.com\",\n\t\"password\": \"password123\",\n\t\"password_confirmation\": \"password123\",\n\t\"role\": \"admin\"\n}"
+						},
+						"url": "{{base_url}}/register"
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json()",
+									"if (jsonData?.data?.token) {",
+									"\tpm.collectionVariables.set('token', jsonData.data.token)",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"admin@dashboard.local\",\n\t\"password\": \"password\"\n}"
+						},
+						"url": "{{base_url}}/login"
+					}
+				},
+				{
+					"name": "Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/me"
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/logout"
+					}
+				},
+				{
+					"name": "Pending Auth — Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json()",
+									"if (jsonData?.data?.token) {",
+									"\tpm.collectionVariables.set('token', jsonData.data.token)",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"admin@dashboard.local\",\n\t\"password\": \"password\"\n}"
+						},
+						"url": "{{base_url}}/auth/login"
+					}
+				},
+				{
+					"name": "Pending Auth — Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/auth/me"
+					}
+				},
+				{
+					"name": "Pending Auth — Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/auth/logout"
+					}
+				}
+			]
+		},
+		{
+			"name": "Dashboard",
+			"item": [
+				{
+					"name": "Get Metrics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/dashboard"
+					}
+				},
+				{
+					"name": "Get Metrics (prefix)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/dashboard/"
+					}
+				},
+				{
+					"name": "Admin — Service Request Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/dashboard/stats",
+						"description": "Requires role: admin"
+					}
+				}
+			]
+		},
+		{
+			"name": "Approvals",
+			"item": [
+				{
+					"name": "List Approvals",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/approvals?per_page=15"
+					}
+				},
+				{
+					"name": "Create Approval",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"wfh\",\n\t\"title\": \"WFH Request - Friday\",\n\t\"description\": \"Need to work from home.\",\n\t\"metadata\": {\n\t\t\"date\": \"2026-04-03\"\n\t}\n}"
+						},
+						"url": "{{base_url}}/approvals"
+					}
+				},
+				{
+					"name": "Get Approval",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/approvals/{{approval_id}}"
+					}
+				},
+				{
+					"name": "Update Approval",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"WFH Request - Updated\",\n\t\"description\": \"Updated details\"\n}"
+						},
+						"url": "{{base_url}}/approvals/{{approval_id}}"
+					}
+				},
+				{
+					"name": "Approve Approval",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"comment\": \"Approved\"\n}"
+						},
+						"url": "{{base_url}}/approvals/{{approval_id}}/approve"
+					}
+				},
+				{
+					"name": "Reject Approval",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"comment\": \"Rejected\"\n}"
+						},
+						"url": "{{base_url}}/approvals/{{approval_id}}/reject"
+					}
+				}
+			]
+		},
+		{
+			"name": "Files (Content Upload)",
+			"item": [
+				{
+					"name": "List Files",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/files?tab=all&search=&category=&uploaded_by=&shared_company_id=&shared_user_id=&updated_from=&updated_to=&per_page=10&sort_by=updated_at&sort_dir=desc",
+						"description": "tab: all | my_uploads | client_files | team_uploads | archived"
+					}
+				},
+				{
+					"name": "File Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/files/stats?tab=all"
+					}
+				},
+				{
+					"name": "Export Files CSV",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/files/export?tab=all"
+					}
+				},
+				{
+					"name": "Upload File",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Client Contract",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Contract",
+									"type": "text"
+								},
+								{
+									"key": "notify_stakeholders",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": ""
+								}
+							]
+						},
+						"url": "{{base_url}}/files"
+					}
+				},
+				{
+					"name": "Get File",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/files/{{file_id}}"
+					}
+				},
+				{
+					"name": "Delete File",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/files/{{file_id}}"
+					}
+				},
+				{
+					"name": "Share File (user or company)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"shared_with_user_id\": 3,\n\t\"notifications_enabled\": true\n}"
+						},
+						"url": "{{base_url}}/files/{{file_id}}/share"
+					}
+				},
+				{
+					"name": "Share File (all employees)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"share_all_employees\": true,\n\t\"notifications_enabled\": true\n}"
+						},
+						"url": "{{base_url}}/files/{{file_id}}/share"
+					}
+				},
+				{
+					"name": "Update File Notify",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"notify_stakeholders\": false\n}"
+						},
+						"url": "{{base_url}}/files/{{file_id}}/notify"
+					}
+				},
+				{
+					"name": "Update File Archive",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"archived\": true\n}"
+						},
+						"url": "{{base_url}}/files/{{file_id}}/archive"
+					}
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "List Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/notifications?per_page=15"
+					}
+				},
+				{
+					"name": "Create Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user_id\": 2,\n\t\"title\": \"Contract Expiring\",\n\t\"message\": \"Contract expires in 7 days.\",\n\t\"type\": \"contract_expiring\"\n}"
+						},
+						"url": "{{base_url}}/notifications"
+					}
+				},
+				{
+					"name": "Mark Notification Read",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/notifications/{{notification_id}}/read"
+					}
+				}
+			]
+		},
+		{
+			"name": "Employees",
+			"item": [
+				{
+					"name": "List Employees",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/employees?search=&role=employee&user_type=employee&assigned_client={{company_id}}&status=active&per_page=10"
+					}
+				},
+				{
+					"name": "Create Employee",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Jane Employee\",\n\t\"email\": \"jane.employee@example.com\",\n\t\"password\": \"password123\",\n\t\"role\": \"employee\",\n\t\"job_title\": \"Backend Developer\",\n\t\"status\": \"active\",\n\t\"avatar\": null\n}"
+						},
+						"url": "{{base_url}}/employees"
+					}
+				},
+				{
+					"name": "Get Employee",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/employees/{{employee_id}}"
+					}
+				},
+				{
+					"name": "Update Employee",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"job_title\": \"Senior Backend Developer\",\n\t\"status\": \"active\"\n}"
+						},
+						"url": "{{base_url}}/employees/{{employee_id}}"
+					}
+				},
+				{
+					"name": "Delete Employee",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/employees/{{employee_id}}"
+					}
+				},
+				{
+					"name": "Assign Clients",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"company_ids\": [1, 2, 3]\n}"
+						},
+						"url": "{{base_url}}/employees/{{employee_id}}/assign-clients"
+					}
+				},
+				{
+					"name": "Get Employee Clients",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/employees/{{employee_id}}/clients"
+					}
+				},
+				{
+					"name": "Update Employee Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"status\": \"on_leave\"\n}"
+						},
+						"url": "{{base_url}}/employees/{{employee_id}}/status"
+					}
+				},
+				{
+					"name": "Employee Metrics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/employees/metrics"
+					}
+				},
+				{
+					"name": "Export Employees CSV",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/employees/export"
+					}
+				}
+			]
+		},
+		{
+			"name": "Clients",
+			"item": [
+				{
+					"name": "List Clients",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/clients?search=&status=active&assigned_employees={{employee_id}}&contract_status=expiring&per_page=10"
+					}
+				},
+				{
+					"name": "Client Metrics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/clients/metrics"
+					}
+				},
+				{
+					"name": "Export Clients CSV",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/clients/export"
+					}
+				},
+				{
+					"name": "Create Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const j = pm.response.json()",
+									"if (j?.data?.id) {",
+									"\tpm.collectionVariables.set('client_id', String(j.data.id))",
+									"\tpm.collectionVariables.set('company_id', String(j.data.id))",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Helios Healthcare\",\n\t\"primary_contact_name\": \"Alex Morgan\",\n\t\"primary_contact_email\": \"alex@helios.example\",\n\t\"logo\": null,\n\t\"status\": \"active\"\n}"
+						},
+						"url": "{{base_url}}/clients"
+					}
+				},
+				{
+					"name": "Get Client",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/clients/{{client_id}}"
+					}
+				},
+				{
+					"name": "Update Client",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Helios Healthcare (Updated)\",\n\t\"primary_contact_name\": \"Alex Morgan\",\n\t\"primary_contact_email\": \"alex@helios.example\",\n\t\"status\": \"active\"\n}"
+						},
+						"url": "{{base_url}}/clients/{{client_id}}"
+					}
+				},
+				{
+					"name": "Delete Client",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/clients/{{client_id}}"
+					}
+				},
+				{
+					"name": "Assign Employees",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user_ids\": [1, 2, 3]\n}"
+						},
+						"url": "{{base_url}}/clients/{{client_id}}/assign-employees"
+					}
+				},
+				{
+					"name": "Get Client Employees",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/clients/{{client_id}}/employees?per_page=10"
+					}
+				},
+				{
+					"name": "List Client Contracts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/clients/{{client_id}}/contracts?per_page=10"
+					}
+				},
+				{
+					"name": "Create Client Contract",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const j = pm.response.json()",
+									"if (j?.data?.id) {",
+									"\tpm.collectionVariables.set('contract_id', String(j.data.id))",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"MSA 2026\",\n\t\"start_date\": \"2026-01-01\",\n\t\"end_date\": \"2026-12-31\"\n}"
+						},
+						"url": "{{base_url}}/clients/{{client_id}}/contracts"
+					}
+				},
+				{
+					"name": "Update Contract",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"MSA 2026 (Amended)\",\n\t\"end_date\": \"2027-06-30\"\n}"
+						},
+						"url": "{{base_url}}/contracts/{{contract_id}}"
+					}
+				},
+				{
+					"name": "Delete Contract",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/contracts/{{contract_id}}"
+					}
+				}
+			]
+		},
+		{
+			"name": "Request Types",
+			"item": [
+				{
+					"name": "List Request Types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/request-types"
+					}
+				}
+			]
+		},
+		{
+			"name": "My Requests (Service)",
+			"item": [
+				{
+					"name": "List My Requests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/my-requests?per_page=10"
+					}
+				},
+				{
+					"name": "Submit Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/my-requests",
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "request_type_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "details",
+									"value": "Please process this ticket.",
+									"type": "text"
+								},
+								{
+									"key": "attachments[]",
+									"type": "file",
+									"src": ""
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get My Request",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/my-requests/{{service_request_id}}"
+					}
+				},
+				{
+					"name": "Delete My Request",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/my-requests/{{service_request_id}}"
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin — Service Requests",
+			"description": "Routes require role: admin",
+			"item": [
+				{
+					"name": "List All Requests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/requests?per_page=10&status=pending"
+					}
+				},
+				{
+					"name": "Get Request",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/requests/{{service_request_id}}"
+					}
+				},
+				{
+					"name": "Update Request Status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/requests/{{service_request_id}}/status",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"status\": \"reviewed\",\n\t\"notes\": \"Looks good.\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Delete Request",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/requests/{{service_request_id}}"
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/users?per_page=15"
+					}
+				},
+				{
+					"name": "Search Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/users/search?q=test"
+					}
+				},
+				{
+					"name": "Users By Role",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/users/role/admin"
+					}
+				},
+				{
+					"name": "Users By Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/users/status/active"
+					}
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/users/{{user_id}}"
+					}
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/users/{{user_id}}",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Updated Name\",\n\t\"job_title\": \"Engineer\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/users",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"New Staff\",\n\t\"email\": \"staff@example.com\",\n\t\"password\": \"password123\",\n\t\"role\": \"employee\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/users/{{user_id}}"
+					}
+				},
+				{
+					"name": "Assign Role",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/users/{{user_id}}/assign-role",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"role\": \"employee\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Assign Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/users/{{user_id}}/assign-status",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"status\": \"active\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Upload User Image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/users/{{user_id}}/upload-image",
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": ""
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Add User Note",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/users/{{user_id}}/add-note",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"note\": \"Internal note.\"\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Leaves",
+			"item": [
+				{
+					"name": "List Leaves",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/leaves?per_page=15"
+					}
+				},
+				{
+					"name": "Search Leaves",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/leaves/search?q="
+					}
+				},
+				{
+					"name": "Create Leave",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/leaves",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"start_date\": \"2026-05-01\",\n\t\"end_date\": \"2026-05-03\",\n\t\"reason\": \"PTO\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Get Leave",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/leaves/{{leave_id}}"
+					}
+				},
+				{
+					"name": "Update Leave",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/leaves/{{leave_id}}",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reason\": \"Updated reason\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Delete Leave",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/leaves/{{leave_id}}"
+					}
+				},
+				{
+					"name": "Approve Leave",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/leaves/{{leave_id}}/approve",
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						}
+					}
+				},
+				{
+					"name": "Reject Leave",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/leaves/{{leave_id}}/reject",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reason\": \"Conflict\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Add Leave Note",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/leaves/{{leave_id}}/add-note",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"note\": \"Note\"\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Tools (Legacy)",
+			"description": "Original /tools module (separate from Work Tools)",
+			"item": [
+				{
+					"name": "List Tools",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/tools?per_page=15"
+					}
+				},
+				{
+					"name": "Create Tool",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/tools",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Sample Tool\",\n\t\"category\": \"General\",\n\t\"status\": \"active\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Search Tools",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/tools/search?q="
+					}
+				},
+				{
+					"name": "Tools By Category",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/tools/category/design"
+					}
+				},
+				{
+					"name": "Tools By Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/tools/status/active"
+					}
+				},
+				{
+					"name": "Tools By User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/tools/user/{{user_id}}"
+					}
+				},
+				{
+					"name": "Get Tool",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/tools/{{tool_id}}"
+					}
+				},
+				{
+					"name": "Update Tool",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/tools/{{tool_id}}",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Renamed\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Delete Tool",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/tools/{{tool_id}}"
+					}
+				},
+				{
+					"name": "Assign Users To Tool",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/tools/{{tool_id}}/assign-users",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user_ids\": [1, 2]\n}"
+						}
+					}
+				},
+				{
+					"name": "Add Tool Note",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/tools/{{tool_id}}/add-note",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"note\": \"Note\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Add Tool Cost",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/tools/{{tool_id}}/add-cost",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"amount\": 100,\n\t\"currency\": \"AED\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Add Tool Billing",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/tools/{{tool_id}}/add-billing",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"billing_cycle\": \"monthly\"\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Content (Legacy)",
+			"item": [
+				{
+					"name": "List Content",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/content?per_page=15"
+					}
+				},
+				{
+					"name": "Create Content",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/content",
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Post",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": ""
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Search Content",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/content/search?q="
+					}
+				},
+				{
+					"name": "Content By User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/content/user/{{user_id}}"
+					}
+				},
+				{
+					"name": "Content By Category",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/content/category/1"
+					}
+				},
+				{
+					"name": "Content By File Type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/content/file-type/pdf"
+					}
+				},
+				{
+					"name": "Get Content",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/content/{{content_id}}"
+					}
+				},
+				{
+					"name": "Download Content",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/content/{{content_id}}/download"
+					}
+				},
+				{
+					"name": "Share Content",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/content/{{content_id}}/share",
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						}
+					}
+				},
+				{
+					"name": "Delete Content",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/content/{{content_id}}"
+					}
+				}
+			]
+		},
+		{
+			"name": "Work Tools & Subscriptions",
+			"item": [
+				{
+					"name": "Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/work-tools/stats"
+					}
+				},
+				{
+					"name": "List Work Tools",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/work-tools?search=&category=&billing_type=&status=&renewal_from=&renewal_to=&per_page=10&sort_by=name&sort_order=asc"
+					}
+				},
+				{
+					"name": "Create Work Tool",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const j = pm.response.json()",
+									"if (j?.data?.id) pm.collectionVariables.set('work_tool_id', String(j.data.id))"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/work-tools",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Ahrefs\",\n\t\"category\": \"SEO\",\n\t\"billing_type\": \"monthly\",\n\t\"cost\": 720,\n\t\"currency\": \"AED\",\n\t\"renewal_date\": \"2026-06-01\",\n\t\"status\": \"active\",\n\t\"notes\": null\n}"
+						}
+					}
+				},
+				{
+					"name": "Get Work Tool",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/work-tools/{{work_tool_id}}"
+					}
+				},
+				{
+					"name": "Update Work Tool",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/work-tools/{{work_tool_id}}",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"status\": \"inactive\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Delete Work Tool",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/work-tools/{{work_tool_id}}"
+					}
+				}
+			]
+		},
+		{
+			"name": "Access Management",
+			"description": "Requires role: admin",
+			"item": [
+				{
+					"name": "Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/accesses/stats"
+					}
+				},
+				{
+					"name": "List Accesses",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/accesses?search=&company_id=&platform=&status=&per_page=10"
+					}
+				},
+				{
+					"name": "Create Access",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const j = pm.response.json()",
+									"if (j?.data?.id) pm.collectionVariables.set('access_id', String(j.data.id))"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/accesses",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"WordPress Admin\",\n\t\"company_id\": 1,\n\t\"platform\": \"WordPress\",\n\t\"status\": \"active\",\n\t\"user_ids\": [2]\n}"
+						}
+					}
+				},
+				{
+					"name": "Get Access",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/accesses/{{access_id}}"
+					}
+				},
+				{
+					"name": "Update Access",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/accesses/{{access_id}}",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"status\": \"inactive\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Assign Users (sync or attach)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{base_url}}/accesses/{{access_id}}/assign-users",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user_ids\": [2, 3],\n\t\"mode\": \"attach\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Delete Access",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/accesses/{{access_id}}"
+					}
+				}
+			]
+		},
+		{
+			"name": "System Logs",
+			"item": [
+				{
+					"name": "Stats (today)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/system-logs/stats"
+					}
+				},
+				{
+					"name": "List System Logs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/system-logs?search=&action=&user_type=&date_from=&date_to=&per_page=10"
+					}
+				},
+				{
+					"name": "Export System Logs CSV",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/system-logs/export?user_type=admin"
+					}
+				}
+			]
+		},
+		{
+			"name": "Activities",
+			"item": [
+				{
+					"name": "List Activities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": "{{base_url}}/activities?per_page=15"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "approval_id",
+			"value": "1"
+		},
+		{
+			"key": "file_id",
+			"value": "1"
+		},
+		{
+			"key": "notification_id",
+			"value": "1"
+		},
+		{
+			"key": "employee_id",
+			"value": "2"
+		},
+		{
+			"key": "company_id",
+			"value": "1"
+		},
+		{
+			"key": "client_id",
+			"value": "1"
+		},
+		{
+			"key": "contract_id",
+			"value": "1"
+		},
+		{
+			"key": "service_request_id",
+			"value": "1"
+		},
+		{
+			"key": "user_id",
+			"value": "1"
+		},
+		{
+			"key": "leave_id",
+			"value": "1"
+		},
+		{
+			"key": "tool_id",
+			"value": "1"
+		},
+		{
+			"key": "content_id",
+			"value": "1"
+		},
+		{
+			"key": "work_tool_id",
+			"value": "1"
+		},
+		{
+			"key": "access_id",
+			"value": "1"
+		}
+	]
+}

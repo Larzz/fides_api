@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,7 +26,10 @@ class User extends Authenticatable
 		'email',
 		'password',
 		'role',
+		'job_title',
+		'avatar',
 		'status',
+		'last_active_at',
 		'notes',
 		'image',
 		'resume',
@@ -58,6 +62,7 @@ class User extends Authenticatable
 		return [
 			'email_verified_at' => 'datetime',
 			'password' => 'hashed',
+			'last_active_at' => 'datetime',
 		];
 	}
 
@@ -117,12 +122,74 @@ class User extends Authenticatable
 		return $this->hasMany(UserContentUpload::class);
 	}
 
+	public function approvals(): HasMany
+	{
+		return $this->hasMany(Approval::class);
+	}
+
+	public function approvedApprovals(): HasMany
+	{
+		return $this->hasMany(Approval::class, 'approved_by');
+	}
+
+	public function uploadedFiles(): HasMany
+	{
+		return $this->hasMany(DashboardFile::class, 'uploaded_by');
+	}
+
+	public function dashboardNotifications(): HasMany
+	{
+		return $this->hasMany(DashboardNotification::class);
+	}
+
+	public function activities(): HasMany
+	{
+		return $this->hasMany(Activity::class);
+	}
+
+	public function companies(): BelongsToMany
+	{
+		return $this->belongsToMany(Company::class, 'company_user')
+			->withPivot('assigned_at');
+	}
+
+	/**
+	 * Pending Requests module: submissions created by this user.
+	 *
+	 * @return HasMany<ServiceRequest, $this>
+	 */
+	public function serviceRequests(): HasMany
+	{
+		return $this->hasMany(ServiceRequest::class, 'user_id');
+	}
+
+	/**
+	 * Pending Requests module: requests this user reviewed as admin.
+	 *
+	 * @return HasMany<ServiceRequest, $this>
+	 */
+	public function reviewedServiceRequests(): HasMany
+	{
+		return $this->hasMany(ServiceRequest::class, 'reviewed_by');
+	}
+
+	/**
+	 * Access management assignments.
+	 *
+	 * @return BelongsToMany<Access, User>
+	 */
+	public function accesses(): BelongsToMany
+	{
+		return $this->belongsToMany(Access::class, 'access_user')
+			->withTimestamps();
+	}
+
 	/**
 	 * Check if user has role
 	 */
 	public function hasRole(string $role): bool
 	{
-		return $this->role === $role;
+		return strtolower((string) $this->role) === strtolower($role);
 	}
 
 	/**
@@ -130,7 +197,8 @@ class User extends Authenticatable
 	 */
 	public function hasAnyRole(array $roles): bool
 	{
-		return in_array($this->role, $roles);
+		$normalizedRoles = array_map('strtolower', $roles);
+		return in_array(strtolower((string) $this->role), $normalizedRoles, true);
 	}
 
 	/**
@@ -138,7 +206,7 @@ class User extends Authenticatable
 	 */
 	public function isAdmin(): bool
 	{
-		return $this->hasRole('Admin');
+		return $this->hasRole('admin');
 	}
 
 	/**
@@ -146,7 +214,7 @@ class User extends Authenticatable
 	 */
 	public function isStaff(): bool
 	{
-		return $this->hasRole('Staff');
+		return $this->hasRole('employee');
 	}
 
 	/**
@@ -154,6 +222,6 @@ class User extends Authenticatable
 	 */
 	public function isClient(): bool
 	{
-		return $this->hasRole('Client');
+		return $this->hasRole('client');
 	}
 }

@@ -1,0 +1,205 @@
+---
+alwaysApply: false
+---
+
+# Laravel Cursor Rules
+# Stack: Laravel 11+, PHP 8.2+, MySQL/PostgreSQL, Laravel Sanctum
+
+## Project Structure
+Follow Laravel conventions with these additions:
+```
+app/
+  Http/
+    Controllers/Api/    # All API controllers go here
+    Requests/           # Form Request validation classes
+    Resources/          # API Resources (transformers)
+    Middleware/
+  Models/               # Eloquent models
+  Services/             # Business logic (keep controllers thin)
+  Repositories/         # DB query abstraction (optional but recommended)
+  Actions/              # Single-purpose action classes
+  Enums/                # PHP 8.1+ backed enums
+  Exceptions/           # Custom exception classes
+database/
+  migrations/
+  seeders/
+  factories/
+routes/
+  api.php               # All API routes
+  web.php               # Only if serving Blade views
+```
+
+## PHP Standards
+- PHP 8.2+ features are encouraged: readonly classes, enums, fibers, typed properties.
+- Always declare strict types: `<?php declare(strict_types=1);`
+- Use named arguments for clarity on functions with many params.
+- Return types must be declared on all methods.
+- Use constructor property promotion wherever possible.
+
+## Controllers
+- Controllers are thin — they only: validate input, call a Service/Action, return a response.
+- Use dedicated `app/Http/Controllers/Api/` namespace for all API controllers.
+- One controller per resource. Use `--api` flag when generating (`php artisan make:controller`).
+- Use `__invoke()` for single-action controllers.
+- Never put business logic inside controllers.
+
+Example:
+```php
+class PostController extends Controller
+{
+    public function __construct(private PostService $postService) {}
+
+    public function index(): JsonResponse
+    {
+        return response()->json(
+            PostResource::collection($this->postService->getPaginated())
+        );
+    }
+
+    public function store(StorePostRequest $request): JsonResponse
+    {
+        $post = $this->postService->create($request->validated());
+        return response()->json(new PostResource($post), 201);
+    }
+}
+```
+
+## Validation
+- Always use Form Request classes (`php artisan make:request`). Never validate in controllers directly.
+- Return validation errors as JSON automatically (Laravel does this for API routes).
+- Define `authorize()` properly — never just `return true` in production without thought.
+
+## API Resources
+- Transform all model data through `JsonResource` or `ResourceCollection`. Never return raw Eloquent models.
+- Use `whenLoaded()` for relationships to avoid N+1 in responses.
+- Keep resources in `app/Http/Resources/`.
+
+## Models
+- Always define `$fillable` (never use `$guarded = []` in production).
+- Define relationships explicitly with return types.
+- Use Eloquent scopes for reusable query logic.
+- Cast attributes using the `$casts` property (or `casts()` method in Laravel 11).
+- Never write raw SQL — use Eloquent or the Query Builder.
+
+```php
+class Post extends Model
+{
+    protected $fillable = ['title', 'body', 'user_id', 'status'];
+
+    protected $casts = [
+        'status' => PostStatus::class, // Enum cast
+        'published_at' => 'datetime',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function scopePublished(Builder $query): void
+    {
+        $query->where('status', PostStatus::Published);
+    }
+}
+```
+
+## Services
+- Business logic lives in `app/Services/`. One service class per domain entity.
+- Services are injected via constructor DI.
+- Keep service methods focused and single-purpose.
+
+## Routes (api.php)
+- Prefix all routes with `api/` and version them: `/api/v1/`.
+- Use `Route::apiResource()` for CRUD.
+- Group routes by auth middleware: `auth:sanctum`.
+- Name all routes explicitly.
+
+```php
+Route::prefix('v1')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::apiResource('posts', PostController::class);
+    });
+});
+```
+
+## Authentication (Sanctum)
+- Use Laravel Sanctum for API authentication.
+- For SPA (Next.js on same domain/subdomain): use cookie-based Sanctum sessions.
+- For mobile or cross-domain: use API tokens.
+- Always run `CSRF` protection for cookie-based auth. Expose `/sanctum/csrf-cookie`.
+- Set `SESSION_DOMAIN`, `SANCTUM_STATEFUL_DOMAINS`, and `CORS` settings correctly in `.env`.
+
+## CORS
+- Configure `config/cors.php` to allow your Next.js origin.
+- Always set `supports_credentials: true` when using cookie auth.
+- Never use `'*'` as `allowed_origins` in production.
+
+## Error Handling
+- Register custom error handling in `bootstrap/app.php` (Laravel 11) or `app/Exceptions/Handler.php`.
+- Return consistent JSON error responses for API routes:
+  ```json
+  { "message": "...", "errors": { "field": ["..."] } }
+  ```
+- Use custom Exception classes for domain-specific errors.
+- Map exceptions to proper HTTP status codes (400, 401, 403, 404, 422, 500).
+
+## Database & Migrations
+- Every schema change must have a migration.
+- Never edit existing migrations after deployment — create new ones.
+- Always add indexes on foreign keys and columns used in `WHERE` clauses.
+- Use `unsignedBigInteger` for foreign keys; prefer `foreignId()->constrained()`.
+- Soft deletes (`SoftDeletes`) for any user-generated content.
+
+## Performance
+- Eager load relationships to prevent N+1: `Post::with('user', 'tags')->get()`.
+- Use pagination for all list endpoints (`->paginate()`).
+- Cache expensive queries with `Cache::remember()`.
+- Queue long-running tasks (emails, exports) with Laravel Queues.
+- Use `php artisan optimize` in production.
+
+## Security
+- Never trust client input — always validate and sanitize.
+- Use `policy` classes for authorization logic (`php artisan make:policy`).
+- Check policies in controllers via `$this->authorize()`.
+- Hash passwords with `bcrypt` or `Hash::make()`. Never store plain text.
+- Rate limit sensitive endpoints with `ThrottleRequests` middleware.
+- Keep `.env` out of version control. Use `.env.example` for documentation.
+
+## Testing
+- Write feature tests for all API endpoints (`tests/Feature/Api/`).
+- Use `RefreshDatabase` trait to reset DB between tests.
+- Use model factories for test data.
+- Test happy path AND validation/auth failure cases.
+
+```php
+public function test_authenticated_user_can_create_post(): void
+{
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->postJson('/api/v1/posts', [
+        'title' => 'Test Post',
+        'body' => 'Content here',
+    ]);
+
+    $response->assertCreated()->assertJsonStructure(['data' => ['id', 'title']]);
+}
+```
+
+## Naming Conventions
+- Controllers: `PascalCase`, singular (e.g., `PostController`)
+- Models: `PascalCase`, singular (e.g., `Post`)
+- Migrations: `snake_case` with verb (e.g., `create_posts_table`)
+- Routes: `kebab-case` (e.g., `/api/v1/blog-posts`)
+- Methods: `camelCase`
+- Variables: `camelCase`
+- Config/env keys: `UPPER_SNAKE_CASE`
+
+## Don'ts
+- Don't put logic in routes files.
+- Don't use `dd()` or `dump()` in production code.
+- Don't use `->get()` without pagination on large datasets.
+- Don't skip Form Requests for validation.
+- Don't return raw model data — always use API Resources.
+- Don't hardcode credentials — use `.env`.

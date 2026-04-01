@@ -3,46 +3,32 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use App\Models\User;
-use App\Models\Tool;
-use App\Models\UserContentUpload;
-use App\Models\UserContentDownload;
-use App\Models\UserContentShare;
-use App\Models\Leave;
 use App\Http\Responses\ApiResponse;
-use Illuminate\Http\Response;
+use App\Models\Activity;
+use App\Models\Approval;
+use App\Models\DashboardFile;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    //
+	public function index(): JsonResponse
+	{
+		$uploadsLast7Days = DashboardFile::query()
+			->where('created_at', '>=', now()->subDays(7))
+			->count();
 
-    public function index(Request $request): JsonResponse
-    {
-        return ApiResponse::success([
-            'message' => 'Dashboard data',
-        ]);
-    }
+		$data = [
+			'pending_approvals_count' => Approval::where('status', 'pending')->count(),
+			'active_users_count' => User::count(),
+			'uploads_last_7_days' => $uploadsLast7Days,
+			'logins_today' => Activity::query()
+				->where('action', 'logged_in')
+				->whereDate('created_at', today())
+				->count(),
+		];
 
-
-    public function getStatistics(Request $request): JsonResponse 
-    {
-        $statistics = [
-            'total_uploaded_content' => UserContentUpload::count()->where('user_id', auth()->user()->id),
-            'total_downloaded_content' => UserContentDownload::count()->where('user_id', auth()->user()->id),
-            'total_shared_content' => UserContentShare::count()->where('user_id', auth()->user()->id),
-            'total_users_online' => User::where('last_login_at', '>=', now()->startOfDay())->count(),
-            'total_login_todays' => User::where('last_login_at', '>=', now()->startOfDay())->count(),
-        ];
-        return ApiResponse::success($statistics, 'Dashboard statistics');
-    }
-
-    public function getAllNotifications(Request $request): JsonResponse
-    {
-        $notifications = Notification::all();
-        return ApiResponse::paginated(
-            NotificationResource::collection($notifications),
-            'All notifications'
-        );
-    }
+		return ApiResponse::success($data, 'Dashboard metrics retrieved successfully');
+	}
+}
